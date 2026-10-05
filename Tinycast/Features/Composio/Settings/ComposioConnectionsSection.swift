@@ -70,7 +70,7 @@ struct ComposioConnectionsSection: View {
     }
 
     private var apiKeyRow: some View {
-        SettingsRow(title: "Composio API key", anchor: .aiConnections, subtitle: keySubtitle) {
+        SettingsRow(title: "Composio API key", subtitle: keySubtitle, anchor: .aiConnections) {
             Image(systemName: "key")
                 .foregroundStyle(.primary)
         } trailing: {
