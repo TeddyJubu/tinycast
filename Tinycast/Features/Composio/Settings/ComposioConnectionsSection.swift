@@ -19,7 +19,7 @@ struct ComposioConnectionsSection: View {
             Toggle(isOn: $appSettings.mcpEnabled) {
                 SettingsFeatureToggleLabel(
                     anchor: .aiConnections, title: "Enable connections",
-                    subtitle: "Tagged apps and MCP servers are offered in chat.")
+                    subtitle: "Apps and MCP servers you connect are offered in chat.")
             }
             apiKeyRow
             Group {
@@ -52,7 +52,7 @@ struct ComposioConnectionsSection: View {
         } header: {
             SettingsSectionHeader(.aiConnections)
         } footer: {
-            Text("Tag an app to reach it as @name. A chat asks before its first tool call.")
+            Text("Click Connect to use it as @name. A chat asks before its first tool call.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

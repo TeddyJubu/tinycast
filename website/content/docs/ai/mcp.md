@@ -1,11 +1,11 @@
 ---
 title: Connections
-description: Tag an app or a remote MCP server so AI Chat can call its tools.
+description: Connect an app or a remote MCP server so AI Chat can call its tools.
 ---
 
 Connections give a model tools from an app, such as mail or an issue tracker, or from a remote
 [Model Context Protocol](https://modelcontextprotocol.io) server. Tinycast reaches them through
-[Composio](https://composio.dev). When you tag one, AI Chat offers its tools during your conversations.
+[Composio](https://composio.dev). When you connect one, AI Chat offers its tools during your conversations.
 
 Turn it on in **Settings → AI → Connections → Enable connections**. It's **off** by default, and it
 only applies while [AI Chat](/docs/ai) is on. While either one is off, Tinycast doesn't contact
@@ -17,24 +17,23 @@ Paste a project API key from [composio.dev](https://composio.dev) and click **Sa
 stored in your login Keychain, never in preferences, logs or backups. **Remove** deletes it. Without
 a key, the catalog and sign-in can't run.
 
-## Tagging an app
+## Connecting an app
 
-**Add connection** opens the catalog.
+**Add connection** opens the catalog. If you have not saved a key yet, paste it there.
 
-- Search for an app. Each card shows its name and a short description.
-- **Connect** opens Composio's sign-in page in your browser. When the account is connected, the card
-  says **Connected**. An app that needs no sign-in says **No sign-in**.
-- **Tag** includes the app in chat. The button then shows its handle, like `@gmail`. Click that
-  handle to remove the tag. Chat stops offering it, and its stored credential is deleted.
+Search if you need to, then click **Connect** on the app. That is the only step. Tinycast offers it
+in chat as `@name`, and opens Composio's sign-in page when the app still needs an account. When
+sign-in is finished the card shows the handle, like `@gmail`. The trash icon removes it. Chat stops
+offering it, and its stored credential is deleted.
 
-The same list in Settings shows each tagged app, its handle, and whether chat can reach it. The link
-button opens sign-in again. Removing a row does the same as removing the tag.
+The same list in Settings shows each connection, its handle, and whether chat can reach it. The link
+button opens sign-in again.
 
 ## Adding a remote MCP server
 
-In the same window, choose **MCP server**. Enter a name and a public HTTPS address, pick **No
-sign-in**, **API key** or **OAuth**, then **Add and tag**. Composio registers the server and Tinycast
-tags it like an app. If it needs a sign-in, the browser opens Composio's page.
+In the same window, paste a public HTTPS address, leave **No sign-in** or pick **API key** or
+**OAuth**, and click **Connect**. Tinycast names it from the address. If it needs a sign-in, the
+browser opens Composio's page.
 
 The address has to be reachable from the internet. Plain HTTP, and an address on this Mac such as
 `localhost`, are refused: Composio calls the server, not Tinycast.

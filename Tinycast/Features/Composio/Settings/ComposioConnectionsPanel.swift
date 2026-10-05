@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Connect an app, tag it for chat, or register a remote MCP server.
+/// One click connects an app or a public MCP address and offers it in chat.
 struct ComposioConnectionsPanel: View {
     @Environment(ComposioCoordinator.self) private var composio
     @Environment(ComposioConnectionsStore.self) private var store
@@ -8,25 +8,24 @@ struct ComposioConnectionsPanel: View {
     let onDone: () -> Void
 
     @State private var query = ""
-    @State private var page = Page.apps
     @State private var searchTask: Task<Void, Never>?
-    @State private var serverName = ""
+    @State private var apiKey = ""
+    @State private var keyMessage: String?
     @State private var serverURL = ""
     @State private var serverAuth = ComposioMCPAuth.none
-    @State private var pendingUntag: ComposioToolkit?
+    @State private var pendingRemoval: ComposioToolkit?
 
     var body: some View {
         VStack(spacing: 0) {
             SettingsEditorHeader(
                 title: "Connections",
-                subtitle: "Connect an app or add a remote MCP server, then tag the ones chat may use."
+                subtitle: "Click Connect. Chat can use it as @name."
             )
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, Theme.Spacing.dialogInset)
             .padding(.top, Theme.Spacing.dialogInset)
             .padding(.bottom, Theme.Spacing.xl)
             Divider()
-            pagePicker
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             Divider()
@@ -38,48 +37,70 @@ struct ComposioConnectionsPanel: View {
         .settingsEditorPanelSurface(controlsOnGlass: false)
         .releasesFocusOnOutsideClick()
         .task {
+            guard composio.hasAPIKey else { return }
             await composio.loadCatalog(search: "")
             await composio.refreshAccounts()
+        }
+        .onChange(of: composio.hasAPIKey) { _, hasKey in
+            guard hasKey else { return }
+            Task {
+                await composio.loadCatalog(search: query)
+                await composio.refreshAccounts()
+            }
         }
         .onDisappear {
             searchTask?.cancel()
             composio.stopPolling()
         }
         .confirmationDialog(
-            "Remove the \(pendingUntag?.name ?? "app") tag?",
-            isPresented: untagBinding, titleVisibility: .visible, presenting: pendingUntag
+            "Remove \(pendingRemoval?.name ?? "this connection")?",
+            isPresented: removalBinding, titleVisibility: .visible, presenting: pendingRemoval
         ) { toolkit in
-            Button("Remove tag", role: .destructive) {
+            Button("Remove", role: .destructive) {
                 guard let connection = store.connection(toolkitSlug: toolkit.slug) else { return }
                 Task { await composio.untag(connection) }
             }
         } message: { _ in
-            Text("Chat stops offering it. You can tag it again from this list.")
+            Text("Chat stops offering it. You can connect it again from this list.")
         }
-    }
-
-    private var pagePicker: some View {
-        Picker("Show", selection: $page) {
-            ForEach(Page.allCases) { page in
-                Text(page.title).tag(page)
-            }
-        }
-        .pickerStyle(.segmented)
-        .labelsHidden()
-        .padding(.horizontal, Theme.Spacing.dialogInset)
-        .padding(.vertical, Theme.Spacing.lg)
-        .accessibilityLabel("Connections")
     }
 
     @ViewBuilder private var content: some View {
-        switch page {
-        case .apps: apps
-        case .mcpServer: mcpServer
+        if composio.hasAPIKey {
+            catalog
+        } else {
+            keyPrompt
         }
     }
 
-    private var apps: some View {
+    private var keyPrompt: some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
+            Text("Paste a Composio project key once. It stays in your login Keychain.")
+                .font(.caption)
+                .foregroundStyle(Theme.Colors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: Theme.Spacing.md) {
+                SecureField("Project key", text: $apiKey)
+                    .textFieldStyle(.roundedBorder)
+                Button("Save") {
+                    keyMessage = composio.saveAPIKey(apiKey)
+                    if keyMessage == nil { apiKey = "" }
+                }
+                .disabled(apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+            if let keyMessage {
+                Text(keyMessage)
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(Theme.Spacing.dialogInset)
+    }
+
+    private var catalog: some View {
         VStack(spacing: Theme.Spacing.lg) {
+            mcpRow
             TextField("Search apps", text: $query)
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal, Theme.Spacing.dialogInset)
@@ -112,11 +133,11 @@ struct ComposioConnectionsPanel: View {
                             ComposioToolkitCard(
                                 toolkit: toolkit,
                                 connection: store.connection(toolkitSlug: toolkit.slug),
-                                isConnected: toolkit.noAuth || composio.connectedSlugs.contains(toolkit.slug),
+                                needsSignIn: needsSignIn(toolkit),
                                 isBusy: composio.busySlug == toolkit.slug,
-                                onConnect: { Task { await composio.connect(toolkitSlug: toolkit.slug) } },
-                                onTag: { Task { await composio.tag(toolkit) } },
-                                onUntag: { pendingUntag = toolkit })
+                                onUse: { Task { await composio.use(toolkit) } },
+                                onSignIn: { Task { await composio.connect(toolkitSlug: toolkit.slug) } },
+                                onRemove: { pendingRemoval = toolkit })
                         }
                     }
                     .padding(.horizontal, Theme.Spacing.dialogInset)
@@ -126,39 +147,24 @@ struct ComposioConnectionsPanel: View {
         }
     }
 
-    private var mcpServer: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.xl) {
-            Text("Composio registers this server and you tag it like an app. It has to be a public HTTPS address.")
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-            SettingsEditorField("Name") {
-                TextField("Acme", text: $serverName)
-                    .settingsEditorTextField()
-            }
-            SettingsEditorField("URL") {
-                TextField("https://mcp.example.com/mcp", text: $serverURL)
-                    .settingsEditorTextField()
-            }
-            SettingsEditorField("Sign-in") {
-                Picker("Sign-in", selection: $serverAuth) {
-                    ForEach(ComposioMCPAuth.allCases) { auth in
-                        Text(auth.title).tag(auth)
-                    }
+    private var mcpRow: some View {
+        HStack(spacing: Theme.Spacing.md) {
+            TextField("https://mcp.example.com/mcp", text: $serverURL)
+                .textFieldStyle(.roundedBorder)
+            Picker("Sign-in", selection: $serverAuth) {
+                ForEach(ComposioMCPAuth.allCases) { auth in
+                    Text(auth.title).tag(auth)
                 }
-                .labelsHidden()
             }
-            Button {
-                Task {
-                    await composio.addMCPServer(name: serverName, url: serverURL, auth: serverAuth)
-                }
-            } label: {
-                Text("Add and tag")
-            }
-            .disabled(composio.busySlug != nil || serverName.trimmingCharacters(in: .whitespaces).isEmpty)
-            Spacer(minLength: 0)
+            .pickerStyle(.menu)
+            .labelsHidden()
+            .fixedSize()
+            .accessibilityLabel("Sign-in")
+            Button("Connect") { connectServer() }
+                .disabled(serverURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || composio.busySlug != nil)
         }
-        .padding(Theme.Spacing.dialogInset)
+        .padding(.horizontal, Theme.Spacing.dialogInset)
+        .padding(.top, Theme.Spacing.lg)
     }
 
     private var footer: some View {
@@ -182,21 +188,24 @@ struct ComposioConnectionsPanel: View {
         [GridItem(.adaptive(minimum: 156), spacing: Theme.Spacing.lg)]
     }
 
-    private var untagBinding: Binding<Bool> {
-        Binding(get: { pendingUntag != nil }, set: { if !$0 { pendingUntag = nil } })
+    private var removalBinding: Binding<Bool> {
+        Binding(get: { pendingRemoval != nil }, set: { if !$0 { pendingRemoval = nil } })
     }
-}
 
-private enum Page: String, CaseIterable, Identifiable {
-    case apps
-    case mcpServer
+    private func needsSignIn(_ toolkit: ComposioToolkit) -> Bool {
+        store.connection(toolkitSlug: toolkit.slug) != nil && !toolkit.noAuth
+            && !composio.connectedSlugs.contains(toolkit.slug)
+    }
 
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .apps: return "Apps"
-        case .mcpServer: return "MCP server"
+    private func connectServer() {
+        let url = serverURL
+        let auth = serverAuth
+        Task {
+            await composio.addMCPServer(url: url, auth: auth)
+            if composio.actionError == nil {
+                serverURL = ""
+                serverAuth = .none
+            }
         }
     }
 }
@@ -204,11 +213,11 @@ private enum Page: String, CaseIterable, Identifiable {
 private struct ComposioToolkitCard: View {
     let toolkit: ComposioToolkit
     let connection: ComposioConnection?
-    let isConnected: Bool
+    let needsSignIn: Bool
     let isBusy: Bool
-    let onConnect: () -> Void
-    let onTag: () -> Void
-    let onUntag: () -> Void
+    let onUse: () -> Void
+    let onSignIn: () -> Void
+    let onRemove: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.md) {
@@ -225,10 +234,7 @@ private struct ComposioToolkitCard: View {
                     .foregroundStyle(Theme.Colors.textSecondary)
                     .lineLimit(2)
             }
-            HStack(spacing: Theme.Spacing.sm) {
-                tagButton
-                connectControl
-            }
+            action
         }
         .padding(Theme.Spacing.lg)
         .frame(maxWidth: .infinity, minHeight: 132, alignment: .topLeading)
@@ -238,32 +244,34 @@ private struct ComposioToolkitCard: View {
         .accessibilityElement(children: .contain)
     }
 
-    private var tagButton: some View {
-        Button(action: connection == nil ? onTag : onUntag) {
-            Label(connection == nil ? "Tag" : "@\(connection?.tag ?? "")", systemImage: "tag")
-        }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.small)
-        .disabled(isBusy)
-        .accessibilityLabel(
-            connection == nil ? "Tag \(toolkit.name)" : "Tagged \(toolkit.name) as @\(connection?.tag ?? "")")
-    }
-
-    @ViewBuilder private var connectControl: some View {
-        if toolkit.noAuth {
-            Text("No sign-in")
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.textSecondary)
-        } else if isConnected {
-            Text("Connected")
-                .font(.caption)
-                .foregroundStyle(Theme.Colors.textSecondary)
-        } else {
-            Button("Connect", action: onConnect)
-                .buttonStyle(.bordered)
+    @ViewBuilder private var action: some View {
+        if connection == nil {
+            Button("Connect", action: onUse)
+                .buttonStyle(.borderedProminent)
                 .controlSize(.small)
                 .disabled(isBusy)
                 .accessibilityLabel("Connect \(toolkit.name)")
+        } else if needsSignIn {
+            Button("Sign in", action: onSignIn)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+                .disabled(isBusy)
+                .accessibilityLabel("Sign in to \(toolkit.name)")
+        } else {
+            HStack(spacing: Theme.Spacing.sm) {
+                Text("@\(connection?.tag ?? "")")
+                    .font(.caption)
+                    .foregroundStyle(Theme.Colors.textSecondary)
+                    .lineLimit(1)
+                Spacer(minLength: 0)
+                Button(action: onRemove) {
+                    Image(systemName: "trash")
+                        .foregroundStyle(.red)
+                }
+                .buttonStyle(.plain)
+                .disabled(isBusy)
+                .accessibilityLabel("Remove \(toolkit.name)")
+            }
         }
     }
 }

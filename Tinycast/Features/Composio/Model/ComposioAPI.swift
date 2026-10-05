@@ -55,6 +55,17 @@ enum ComposioAPI {
         return slug.isEmpty ? "SERVER" : slug
     }
 
+    /// The readable name a pasted MCP address gets when the reader does not type one.
+    static func displayName(for mcpURL: URL) -> String {
+        guard var host = mcpURL.host()?.lowercased(), !host.isEmpty else { return "Server" }
+        for prefix in ["www.", "mcp."] where host.hasPrefix(prefix) {
+            host.removeFirst(prefix.count)
+        }
+        let label = host.split(separator: ".").first.map(String.init) ?? ""
+        guard let first = label.first else { return "Server" }
+        return first.uppercased() + label.dropFirst()
+    }
+
     static func oauthDiscoveryURL(for mcpURL: URL) -> String? {
         guard var components = URLComponents(url: mcpURL, resolvingAgainstBaseURL: false) else {
             return nil

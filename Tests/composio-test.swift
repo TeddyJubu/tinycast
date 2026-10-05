@@ -78,6 +78,12 @@ struct ComposioTests {
             expect(false, "the sample URL")
             return
         }
+        expect(
+            ComposioAPI.displayName(for: sample) == "Example",
+            "a pasted address is named from its host")
+        if let linear = URL(string: "https://mcp.linear.app/mcp") {
+            expect(ComposioAPI.displayName(for: linear) == "Linear", "an mcp. prefix is not the name")
+        }
         let discovery = ComposioAPI.oauthDiscoveryURL(for: sample)
         expect(
             discovery == "https://mcp.example.com/.well-known/oauth-authorization-server",

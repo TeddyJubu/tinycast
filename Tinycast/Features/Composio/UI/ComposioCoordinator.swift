@@ -82,33 +82,21 @@ final class ComposioCoordinator {
         connectedSlugs = (try? await client.activeSlugs(userID: store.userID)) ?? connectedSlugs
     }
 
-    func connect(toolkitSlug: String) async {
-        await run(slug: toolkitSlug) { client in
-            let sessionID: String
-            if let existing = self.store.connection(toolkitSlug: toolkitSlug) {
-                sessionID = existing.sessionID
-            } else {
-                let endpoint = try await client.createSession(
-                    userID: self.store.userID, toolkitSlug: toolkitSlug)
-                guard endpoint.acceptsCredential else {
-                    throw ComposioAPI.Failure(message: "Composio returned an unexpected address.")
-                }
-                sessionID = endpoint.sessionID
-            }
-            let link = try await client.connectLink(sessionID: sessionID, toolkitSlug: toolkitSlug)
-            guard NSWorkspace.shared.open(link) else {
-                throw ComposioAPI.Failure(message: "The sign-in page could not be opened.")
-            }
-            self.poll(toolkitSlug)
-        }
-    }
-
-    func tag(_ toolkit: ComposioToolkit) async {
+    /// Offered in chat immediately. Sign-in opens only when the account is still missing.
+    func use(_ toolkit: ComposioToolkit) async {
         guard store.connection(toolkitSlug: toolkit.slug) == nil else { return }
         await run(slug: toolkit.slug) { client in
             try await self.tagSession(
                 client: client, toolkitSlug: toolkit.slug, name: toolkit.name, logoURL: toolkit.logoURL,
                 kind: .app)
+            let signedIn = toolkit.noAuth || self.connectedSlugs.contains(toolkit.slug)
+            if !signedIn { try await self.openConnectLink(client: client, toolkitSlug: toolkit.slug) }
+        }
+    }
+
+    func connect(toolkitSlug: String) async {
+        await run(slug: toolkitSlug) { client in
+            try await self.openConnectLink(client: client, toolkitSlug: toolkitSlug)
         }
     }
 
@@ -131,12 +119,7 @@ final class ComposioCoordinator {
         }
     }
 
-    func addMCPServer(name: String, url: String, auth: ComposioMCPAuth) async {
-        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedName.isEmpty else {
-            actionError = "Name the server."
-            return
-        }
+    func addMCPServer(url: String, auth: ComposioMCPAuth, name: String = "") async {
         let mcpURL: URL
         do {
             mcpURL = try ComposioAPI.validateMCPURL(url)
@@ -144,24 +127,21 @@ final class ComposioCoordinator {
             actionError = error.localizedDescription
             return
         }
-        let requested = ComposioAPI.customSlug(from: trimmedName)
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let resolvedName = trimmedName.isEmpty ? ComposioAPI.displayName(for: mcpURL) : trimmedName
+        let requested = ComposioAPI.customSlug(from: resolvedName)
         await run(slug: requested) { client in
             let registered = try await client.registerMCPServer(
-                slug: requested, name: trimmedName, appURL: mcpURL.absoluteString, auth: auth,
+                slug: requested, name: resolvedName, appURL: mcpURL.absoluteString, auth: auth,
                 discoveryURL: auth == .oauth ? ComposioAPI.oauthDiscoveryURL(for: mcpURL) : nil)
             guard self.store.connection(toolkitSlug: registered) == nil else {
-                throw ComposioAPI.Failure(message: "\(trimmedName) is already tagged.")
+                throw ComposioAPI.Failure(message: "\(resolvedName) is already connected.")
             }
             if auth == .none { try await client.syncMCPServer(slug: registered) }
             try await self.tagSession(
-                client: client, toolkitSlug: registered, name: trimmedName, logoURL: nil, kind: .mcpServer)
+                client: client, toolkitSlug: registered, name: resolvedName, logoURL: nil, kind: .mcpServer)
             if auth != .none {
-                let sessionID = self.store.connection(toolkitSlug: registered)?.sessionID ?? ""
-                let link = try await client.connectLink(sessionID: sessionID, toolkitSlug: registered)
-                guard NSWorkspace.shared.open(link) else {
-                    throw ComposioAPI.Failure(message: "The sign-in page could not be opened.")
-                }
-                self.poll(registered)
+                try await self.openConnectLink(client: client, toolkitSlug: registered)
             }
         }
     }
@@ -201,6 +181,24 @@ final class ComposioCoordinator {
             }
         }
         refreshedAt = Date()
+    }
+
+    private func openConnectLink(client: ComposioClient, toolkitSlug: String) async throws {
+        let sessionID: String
+        if let existing = store.connection(toolkitSlug: toolkitSlug), !existing.sessionID.isEmpty {
+            sessionID = existing.sessionID
+        } else {
+            let endpoint = try await client.createSession(userID: store.userID, toolkitSlug: toolkitSlug)
+            guard endpoint.acceptsCredential else {
+                throw ComposioAPI.Failure(message: "Composio returned an unexpected address.")
+            }
+            sessionID = endpoint.sessionID
+        }
+        let link = try await client.connectLink(sessionID: sessionID, toolkitSlug: toolkitSlug)
+        guard NSWorkspace.shared.open(link) else {
+            throw ComposioAPI.Failure(message: "The sign-in page could not be opened.")
+        }
+        poll(toolkitSlug)
     }
 
     private func tagSession(

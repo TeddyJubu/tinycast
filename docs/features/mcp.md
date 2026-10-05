@@ -320,19 +320,19 @@ Stopped.
 ## Settings
 
 `ComposioConnectionsSection` is the section inside Settings → AI. It replaces the server editor.
-The reader saves a Composio project key, then **Add connection** opens a catalog of apps. **Connect**
-opens Composio's sign-in page. **Tag** creates the session above and lists the app as `@name`.
-The same window's **MCP server** page registers a remote server with Composio and tags it the same
-way. A server that was saved before this section still appears, and can be removed; it is not edited
-here. `composio-test` pins the host check, the decoding, and the server a tag becomes.
+The reader saves a Composio project key, then **Add connection** opens one list. **Connect** on an
+app offers it in chat as `@name` and opens sign-in only when the account is still missing. Pasting a
+public HTTPS address and clicking **Connect** registers that MCP server the same way; the name comes
+from the host. A server that was saved before this section still appears, and can be removed; it is
+not edited here. `composio-test` pins the host check, the decoding, and the server a tag becomes.
 
 ## Manual sweep
 
-- Save a Composio project key, then **Add connection**. Search, **Connect** (the browser opens
-  Composio's page; the card becomes **Connected**), and **Tag**. The Settings row shows `@name` and
-  a status. Removing the tag stops offering it and deletes the stored header.
-- **MCP server** accepts a public HTTPS address and tags it. `http://` and `localhost` are refused
-  in the form. A command that runs on this Mac is not added here.
+- Save a Composio project key, then **Add connection**. One **Connect** on an app opens sign-in
+  when it needs an account and lists `@name` in Settings. Removing it stops offering it and deletes
+  the stored header.
+- Pasting a public HTTPS address and clicking **Connect** adds that server without a separate name.
+  `http://` and `localhost` are refused. A command that runs on this Mac is not added here.
 - A server saved before this section still appears and can be removed. It is not edited, and an
   earlier OAuth server is not signed in again from this section.
 - An earlier stdio server, if one is still saved, reaches ready; its process is gone ten minutes
