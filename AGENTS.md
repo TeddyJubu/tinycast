@@ -133,3 +133,23 @@ Each item is explained in [testing.md](docs/testing.md#definition-of-done).
 - `./Scripts/lint.sh` is clean.
 - `grep -rln 'import AppKit\|import SwiftUI\|import Cocoa' Tinycast/Features/*/Model/` returns nothing.
 - Any doc your change made wrong is fixed in the same commit.
+
+## Cursor Cloud specific instructions
+
+Cloud agents run on Linux. The app needs macOS 26 and Xcode 26, so `xcodebuild`,
+`./Scripts/run-tests.sh`, and `./Scripts/lint.sh` cannot run here. SwiftLint is the thing `lint.sh`
+exits on; `node Scripts/check-settings-search.js` is the other half and runs on its own.
+
+The website in `website/` is what an agent can run. Actions installs it with Node 24
+(`.github/workflows/website.yml`). This environment puts that Node on `/usr/local/bin` ahead of the
+image Node, then `npm ci` in `website/`.
+
+- Dev server, from `website/`: `npm run dev -- --hostname 127.0.0.1 --port 3000`, then open
+  `http://127.0.0.1:3000/`. Next.js 16 answers browser requests for `/_next` with 403 when the page
+  origin is not the bind host, which is what `0.0.0.0` does to a tab on `127.0.0.1`. The client
+  never hydrates and clicks do nothing. Keep the bind host and the URL host the same.
+- `npm run lint`, `npm run check:worker`, and `npm run build`. A build with no `GITHUB_TOKEN` uses
+  the anonymous GitHub API and still succeeds.
+- `/support` renders with no Polar credentials. `next dev` does not run `worker/`, so choosing a
+  price and clicking Buy shows "The checkout could not be opened." That is the local path. Do not
+  put a production Polar token in the environment to make checkout succeed.
