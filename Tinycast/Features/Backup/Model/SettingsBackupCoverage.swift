@@ -154,6 +154,11 @@ enum SettingsBackupCoverage {
         AppSettingsKey.mcpServers.rawValue:
             "An MCP server is a source of executable code and a destination for chat context, and "
             + "it is meaningless without the machine-local Keychain secrets it describes.",
+        AppSettingsKey.composioUserID.rawValue:
+            "Identifies this Mac to Composio. Another Mac connects its own accounts.",
+        AppSettingsKey.composioConnections.rawValue:
+            "A tagged connection is a destination for chat context and names a session whose "
+            + "credential lives in the login Keychain.",
         AppSettingsKey.quickActionsEnabled.rawValue:
             "Grants keystroke delivery into other apps through the Accessibility permission, and a "
             + "flag that grants a capability is never carried by a backup.",

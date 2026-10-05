@@ -46,6 +46,7 @@ final class MCPCoordinator {
     func warmUp() {
         guard isActive else { return }
         manager.reconcile(ownServers)
+        core.composioCoordinator.refreshSessions()
     }
 
     /// What Tinycast runs itself; Codex and Claude start their own copy of every local server.

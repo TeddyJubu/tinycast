@@ -91,6 +91,8 @@ enum AppSettingsKey: String, CaseIterable {
     case aiInstalledOverrides = "aiInstalledOverrides"
     case mcpEnabled = "mcpEnabled"
     case mcpServers = "mcpServers"
+    case composioUserID = "composioUserID"
+    case composioConnections = "composioConnections"
     case quickActionsEnabled = "quickActionsEnabled"
     case quickActionModel = "quickActionModel"
     case quickActionModelOverrides = "quickActionModelOverrides"

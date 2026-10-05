@@ -135,7 +135,6 @@
 		2D40FB3C6B78FE746AB0F7EB /* WindowSwitchOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867B0475618A01A765AC0DC5 /* WindowSwitchOrder.swift */; };
 		2D51D92BE8EAB5440F4C8517 /* ExtensionPaletteModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0FB3A9CA762A7A8DB99BA6 /* ExtensionPaletteModifiers.swift */; };
 		2E05FC5D5A0C2BACE7DB8CDD /* LauncherSuggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE5D670CFC618B2EAFA0868 /* LauncherSuggestions.swift */; };
-		2E0957985928EC32511A5969 /* MCPServerEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0814A6707E67A3BD3772E119 /* MCPServerEditor.swift */; };
 		2E31A4EA73B19928A05519F8 /* SettingsFileBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16A7349B3D5EF92EFB35E58 /* SettingsFileBinding.swift */; };
 		2E9641057A7B1FE1446BD14D /* EscapeKeyBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920FAC043BC3887B6D2C314D /* EscapeKeyBehavior.swift */; };
 		2E9CDC24A175FE8AAE4F03D9 /* InstalledAIStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = D817AF0E23DDCC95147B5AFB /* InstalledAIStream.swift */; };
@@ -654,7 +653,6 @@
 		D19969C92342E025A16443B5 /* CalcTokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1C64977153EF104F583008 /* CalcTokenizer.swift */; };
 		D1F9C28CA4048480DB818EE9 /* LauncherList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 132C5A534C02305C1A29CC74 /* LauncherList.swift */; };
 		D37EEAAC8153880548E909C4 /* DictionaryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01F745C8C21DF1290E2169C /* DictionaryEntry.swift */; };
-		D37F4361928A38602002FAEF /* MCPSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00ECBD55353C83A7F4E93592 /* MCPSettingsSection.swift */; };
 		D39C8F6535F028FF79A19AE4 /* WindowLayoutEntryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F27259003BDECA2054FC67 /* WindowLayoutEntryPicker.swift */; };
 		D3C7265B00695CE274ED5A23 /* ExtensionRefreshIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 996CF61F3B13A573B8D5A11F /* ExtensionRefreshIndicator.swift */; };
 		D3F07F4AEBEAA489EDCD0763 /* FileSearchList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 463FE27F894A8777C8ACCF1D /* FileSearchList.swift */; };
@@ -796,6 +794,15 @@
 		FF372D9F3A0FE3671D517589 /* WindowCommandCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE33C0D70D728B12E9A8D4A6 /* WindowCommandCoordinator.swift */; };
 		FF42AF572BA0BFEFCFCE5901 /* WindowLayoutGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF7FC0E52E9082006614E0D /* WindowLayoutGeometry.swift */; };
 		FF934DD9FBD8F26BAB72ACD1 /* SymbolImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64EC07E163CE4F3D11FE7225 /* SymbolImage.swift */; };
+		C0A10510C000000000000011 /* ComposioAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A10510B000000000000011 /* ComposioAPI.swift */; };
+		C0A10510C000000000000012 /* ComposioConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A10510B000000000000012 /* ComposioConnection.swift */; };
+		C0A10510C000000000000013 /* ComposioClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A10510B000000000000013 /* ComposioClient.swift */; };
+		C0A10510C000000000000014 /* ComposioSecretStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A10510B000000000000014 /* ComposioSecretStore.swift */; };
+		C0A10510C000000000000015 /* ComposioConnectionsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A10510B000000000000015 /* ComposioConnectionsStore.swift */; };
+		C0A10510C000000000000016 /* ComposioCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A10510B000000000000016 /* ComposioCoordinator.swift */; };
+		C0A10510C000000000000017 /* ComposioConnectionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A10510B000000000000017 /* ComposioConnectionsSection.swift */; };
+		C0A10510C000000000000018 /* ComposioConnectionsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A10510B000000000000018 /* ComposioConnectionsPanel.swift */; };
+		C0A10510C000000000000019 /* ComposioMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A10510B000000000000019 /* ComposioMark.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -833,7 +840,6 @@
 /* Begin PBXFileReference section */
 		00B475B5929CC0478EFAC7D8 /* UpdateFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateFailure.swift; sourceTree = "<group>"; };
 		00CF6A57ECFDA17248393EA8 /* RaycastScriptImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaycastScriptImport.swift; sourceTree = "<group>"; };
-		00ECBD55353C83A7F4E93592 /* MCPSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPSettingsSection.swift; sourceTree = "<group>"; };
 		025D7D760DE2FD02C0D7D9D2 /* ColorFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorFormat.swift; sourceTree = "<group>"; };
 		0266BAF4643A4B5C41B600DE /* ExtensionColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionColors.swift; sourceTree = "<group>"; };
 		02BCAB1F3B6930FE0B819F6D /* OnboardingState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingState.swift; sourceTree = "<group>"; };
@@ -850,7 +856,6 @@
 		06B5C0B83C3645AC90639B85 /* AppleIntelligenceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleIntelligenceProvider.swift; sourceTree = "<group>"; };
 		072DA32B7365FAAB7C38F25C /* AppleShortcutsSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleShortcutsSettingsView.swift; sourceTree = "<group>"; };
 		0805655B4808B5B407C7BE7A /* CustomWindowSizeEditorPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomWindowSizeEditorPanel.swift; sourceTree = "<group>"; };
-		0814A6707E67A3BD3772E119 /* MCPServerEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCPServerEditor.swift; sourceTree = "<group>"; };
 		08279257B0F5995E86FF2C03 /* EntryIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryIconView.swift; sourceTree = "<group>"; };
 		08A1D354C1785923E612848C /* RenderNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderNode.swift; sourceTree = "<group>"; };
 		08BB552C55576C43EBC8177C /* WindowSwitchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowSwitchCoordinator.swift; sourceTree = "<group>"; };
@@ -1621,6 +1626,15 @@
 		FE41DC04958D7C2FF8C47F62 /* CustomCommandCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCommandCoordinator.swift; sourceTree = "<group>"; };
 		FE72CE02F853ACE956627347 /* SystemAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemAction.swift; sourceTree = "<group>"; };
 		FF447647B325A119F2B3BCD1 /* UnitCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitCategory.swift; sourceTree = "<group>"; };
+		C0A10510B000000000000011 /* ComposioAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposioAPI.swift; sourceTree = "<group>"; };
+		C0A10510B000000000000012 /* ComposioConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposioConnection.swift; sourceTree = "<group>"; };
+		C0A10510B000000000000013 /* ComposioClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposioClient.swift; sourceTree = "<group>"; };
+		C0A10510B000000000000014 /* ComposioSecretStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposioSecretStore.swift; sourceTree = "<group>"; };
+		C0A10510B000000000000015 /* ComposioConnectionsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposioConnectionsStore.swift; sourceTree = "<group>"; };
+		C0A10510B000000000000016 /* ComposioCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposioCoordinator.swift; sourceTree = "<group>"; };
+		C0A10510B000000000000017 /* ComposioConnectionsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposioConnectionsSection.swift; sourceTree = "<group>"; };
+		C0A10510B000000000000018 /* ComposioConnectionsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposioConnectionsPanel.swift; sourceTree = "<group>"; };
+		C0A10510B000000000000019 /* ComposioMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposioMark.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -2056,8 +2070,6 @@
 		3D2BEED14321220AC36C7FC3 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				0814A6707E67A3BD3772E119 /* MCPServerEditor.swift */,
-				00ECBD55353C83A7F4E93592 /* MCPSettingsSection.swift */,
 				2BAC1D756594DA0FC63F9033 /* MCPSettingsStore.swift */,
 			);
 			path = Settings;
@@ -2797,6 +2809,55 @@
 			path = Service;
 			sourceTree = "<group>";
 		};
+
+		C0A10510A000000000000001 /* Composio */ = {
+			isa = PBXGroup;
+			children = (
+				C0A10510A000000000000002 /* Model */,
+				C0A10510A000000000000003 /* Service */,
+				C0A10510A000000000000004 /* Settings */,
+				C0A10510A000000000000005 /* UI */,
+			);
+			path = Composio;
+			sourceTree = "<group>";
+		};
+		C0A10510A000000000000002 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C0A10510B000000000000011 /* ComposioAPI.swift */,
+				C0A10510B000000000000012 /* ComposioConnection.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		C0A10510A000000000000003 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				C0A10510B000000000000013 /* ComposioClient.swift */,
+				C0A10510B000000000000014 /* ComposioSecretStore.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		C0A10510A000000000000004 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				C0A10510B000000000000018 /* ComposioConnectionsPanel.swift */,
+				C0A10510B000000000000017 /* ComposioConnectionsSection.swift */,
+				C0A10510B000000000000015 /* ComposioConnectionsStore.swift */,
+				C0A10510B000000000000019 /* ComposioMark.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		C0A10510A000000000000005 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				C0A10510B000000000000016 /* ComposioCoordinator.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		95CA98985928A88B33F82556 /* Features */ = {
 			isa = PBXGroup;
 			children = (
@@ -2807,6 +2868,7 @@
 				AB3219F826C0EB84910B6AAD /* Calendar */,
 				A4EEB152B6277E473ED70808 /* Camera */,
 				005F026A8F7D5E209B1CE917 /* Clipboard */,
+				C0A10510A000000000000001 /* Composio */,
 				486F4CE5090E1ABA5AC16451 /* CustomCommands */,
 				8CE2C21B4FD7CE64254DC392 /* Dictation */,
 				DDAC14B5D5139B06818C614B /* Dictionary */,
@@ -4181,9 +4243,16 @@
 				5CA4B45552F689689FBAFA21 /* MCPSecretStore.swift in Sources */,
 				54D56A2119945AA73F4FBA99 /* MCPServer.swift in Sources */,
 				16A8F14D5FC9C26CA6B616FB /* MCPServerConnection.swift in Sources */,
-				2E0957985928EC32511A5969 /* MCPServerEditor.swift in Sources */,
 				44646A576847F2D9FB68D8CF /* MCPServerManager.swift in Sources */,
-				D37F4361928A38602002FAEF /* MCPSettingsSection.swift in Sources */,
+				C0A10510C000000000000011 /* ComposioAPI.swift in Sources */,
+				C0A10510C000000000000012 /* ComposioConnection.swift in Sources */,
+				C0A10510C000000000000013 /* ComposioClient.swift in Sources */,
+				C0A10510C000000000000014 /* ComposioSecretStore.swift in Sources */,
+				C0A10510C000000000000015 /* ComposioConnectionsStore.swift in Sources */,
+				C0A10510C000000000000016 /* ComposioCoordinator.swift in Sources */,
+				C0A10510C000000000000017 /* ComposioConnectionsSection.swift in Sources */,
+				C0A10510C000000000000018 /* ComposioConnectionsPanel.swift in Sources */,
+				C0A10510C000000000000019 /* ComposioMark.swift in Sources */,
 				F70A66A5BC558684091F6603 /* MCPSettingsStore.swift in Sources */,
 				57B8D2628E23D0D9BD8815AD /* MCPStdioTransport.swift in Sources */,
 				3278D86A619DC587B10EEC1B /* MCPTool.swift in Sources */,

@@ -298,11 +298,14 @@ enum SettingsSearchCatalog {
             .aiSystemPrompt, "Send a system prompt",
             keywords: ["instructions", "persona"]),
         .init(
-            .aiMCPServers, "Enable MCP servers",
-            keywords: ["tools", "model context protocol"]),
+            .aiConnections, "Enable connections",
+            keywords: ["tools", "model context protocol", "mcp", "composio", "apps"]),
         .init(
-            .aiMCPServers, "Add MCP Server",
-            keywords: ["tools", "model context protocol", "stdio"]),
+            .aiConnections, "Composio API key",
+            keywords: ["composio", "token", "mcp"]),
+        .init(
+            .aiConnections, "Add connection",
+            keywords: ["tools", "model context protocol", "mcp", "tag", "app", "composio"]),
         .init(
             group: .aiCommands, "AI commands",
             keywords: ["shortcut", "launcher", "chat"])
