@@ -124,7 +124,7 @@ open the tool's **Advanced** tab:
   tool from touching your files, and the row tells you when a value won't be used.
 
 Tinycast uses these tools for chat only. Claude, Grok and OpenCode run with tools, file access and
-shell access turned off. The exception is [MCP servers](/docs/ai/mcp) you add, which Codex and Claude
+shell access turned off. The exception is [connections](/docs/ai/mcp) you tag, which Codex and Claude
 can call but the other three can't.
 
 Cursor runs in Ask mode in a private Tinycast workspace: it can read but not edit, and MCP tools
@@ -198,10 +198,10 @@ Both are billed again with every message, and the pane mentions this.
 When the box contains text, it opens blurred, so a screenshot of Settings doesn't show your
 instructions. Click it to edit.
 
-## Tools from MCP servers
+## Tools from connections
 
 With an API connection, or with the installed Codex or Claude command, the model can call tools from
-MCP servers you add. See [MCP servers](/docs/ai/mcp).
+apps and remote MCP servers you tag. See [Connections](/docs/ai/mcp).
 
 ## Privacy and storage
 

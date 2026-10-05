@@ -29,6 +29,13 @@ nothing about MCP. `AIChatCoordinator.send` is the one place the two meet.
 - **Remote endpoints require HTTPS**, through the same `AIEndpointPolicy.validate` the AI providers
   use — plain HTTP only for `localhost`, `127.0.0.1` and `::1`, and no other scheme at all. There is
   one place that decides this and MCP does not get a second one.
+- **A tagged Composio connection is one session and one HTTP server.** `ComposioCoordinator` is
+  the only place that creates it. The session is limited to that toolkit, the workbench is off, and
+  the model cannot remove the connection. The project API key is sent only when the session URL's
+  host is `composio.dev` or a subdomain of it, as `x-api-key`, and it lives in the login Keychain.
+  A custom MCP server has to be a public HTTPS address: Composio calls it, so loopback is refused
+  even though `AIEndpointPolicy` would allow it for a server Tinycast dials itself. `composioUserID`
+  and `composioConnections` stay out of backups for the same reason `mcpServers` does.
 - **OAuth tokens belong to one configured MCP endpoint.** Editing its URL cannot lend its token to
   the new destination. Discovery validates every endpoint; private ephemeral sessions have no URL,
   cookie or credential cache. OAuth endpoints — discovery, registration, token — refuse every
@@ -312,30 +319,31 @@ Stopped.
 
 ## Settings
 
-`MCPSettingsSection` is a section inside Settings → AI, the way `AICommandSection` is. Each row leads
-with the handle, because that is the half a reader has to type, then the live status and the
-transport. `MCPServerEditor` reaches `MCPCoordinator` through its environment. The editor holds name,
-HTTP or command, Header or OAuth authentication, optional client ID/secret, one Sign In / Cancel / Sign Out button and live
-sign-in status, enabled, trust, and a Test Connection button that runs a real handshake so a typo is
-caught there rather than in the middle of a conversation.
+`ComposioConnectionsSection` is the section inside Settings → AI. It replaces the server editor.
+The reader saves a Composio project key, then **Add connection** opens a catalog of apps. **Connect**
+opens Composio's sign-in page. **Tag** creates the session above and lists the app as `@name`.
+The same window's **MCP server** page registers a remote server with Composio and tags it the same
+way. A server that was saved before this section still appears, and can be removed; it is not edited
+here. `composio-test` pins the host check, the decoding, and the server a tag becomes.
 
 ## Manual sweep
 
-- An HTTP server with a bearer header reports its tool count from Test Connection and from its row.
-- An OAuth-only server signs in through the browser with client fields empty when DCR is available;
-  Test Connection and a BYOK chat use the session. Repeat with supplied client credentials.
-- Relaunch retains the sign-in, refresh retains connectivity, and Sign Out makes Test Connection
-  report Sign-in required. Changing the endpoint never sends the old token to the new endpoint.
-- Cancelling sign-in or occupying port 4962 leaves no listener or stale successful sign-in behind.
-- A stdio server (`npx -y @modelcontextprotocol/server-filesystem ~/Desktop`) reaches ready; its
-  process is gone ten minutes after the palette closes, and immediately on Quit.
+- Save a Composio project key, then **Add connection**. Search, **Connect** (the browser opens
+  Composio's page; the card becomes **Connected**), and **Tag**. The Settings row shows `@name` and
+  a status. Removing the tag stops offering it and deletes the stored header.
+- **MCP server** accepts a public HTTPS address and tags it. `http://` and `localhost` are refused
+  in the form. A command that runs on this Mac is not added here.
+- A server saved before this section still appears and can be removed. It is not edited, and an
+  earlier OAuth server is not signed in again from this section.
+- An earlier stdio server, if one is still saved, reaches ready; its process is gone ten minutes
+  after the palette closes, and immediately on Quit. `mcp-stdio-test` covers that transport.
 - A question answered with a tool shows the row inline, spinner then glyph, and the reply continues
   after it. Reopening that chat from ⌘K → Chat History or the AI Chat window's sidebar still shows
   what ran.
 - The first call raises the dialog. Allow This Chat does not ask again in that conversation and does
   in the next; Always Allow survives a relaunch; Escape refuses only that call.
-- `@filesystem list my desktop` shows the tools glyph after the text, sends without the prefix, and
-  offers only that server's tools. `@nosuch hello` is sent verbatim.
+- `@gmail find the latest invoice` shows the tools glyph after the text, sends without the prefix,
+  and offers only that connection's tools. `@nosuch hello` is sent verbatim.
 - On Apple Intelligence, Grok, OpenCode or Cursor, no tool is offered and the reply streams as before.
 - On Codex and on the Claude command the same question answers with the same rows, the same dialog
   and the same `@slug` scoping; `ps` during a turn shows no secret on either command line.
@@ -343,14 +351,14 @@ caught there rather than in the middle of a conversation.
   Codex reply that calls a tool more than 100 times still ends on its own answer.
 - A Codex turn with the user's own `~/.codex` servers configured runs none of them: nothing they
   would have printed appears, and their processes never start.
-- Signing out of an OAuth server mid-conversation, then asking again, relaunches the app-server
-  rather than sending the old token; Codex's own `~/.codex/config.toml` is byte-identical after.
+- Removing a tagged connection mid-conversation, then asking again, relaunches the app-server
+  rather than sending the old header; Codex's own `~/.codex/config.toml` is byte-identical after.
 - With `/Library/Application Support/ClaudeCode/managed-mcp.json` present, the Claude row says MCP
   is managed by your organization and the turn runs with no MCP flags at all.
-- Switching MCP off, then AI off, leaves no server process resident — including right after a
-  Codex turn that used a local server.
-- A settings backup carries neither a server nor the flag.
-- Harnesses: `mcp-test`, `mcp-stdio-test` and `mcp-oauth-test`, plus the tool halves of `ai-provider-test`
+- Switching connections off, then AI off, leaves no server process resident — including right after
+  a Codex turn that used a local server saved earlier.
+- A settings backup carries neither the connections switch, the tagged list, a server, nor the flag.
+- Harnesses: `composio-test`, `mcp-test`, `mcp-stdio-test` and `mcp-oauth-test`, plus the tool halves of `ai-provider-test`
   (catalog and turn encoding, fragmented argument decoding, both CLIs' launch encodings and their
   two consent channels), `ai-chat-test` (the loop, its cap, its output bounds, and tool-use
   persistence), `codex-turn-test` (the launch boundary and its failing closed, one launch for

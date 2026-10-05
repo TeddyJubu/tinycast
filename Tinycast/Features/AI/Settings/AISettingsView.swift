@@ -36,7 +36,7 @@ struct AISettingsView: View {
                 chatSection
                 conversationsSection
                 systemPromptSection
-                MCPSettingsSection()
+                ComposioConnectionsSection()
             }
             .settingsEnabled(appSettings.aiEnabled)
         }

@@ -69,6 +69,7 @@ final class AppCore {
         environmentStore: .keychain,
         isAppleIntelligenceAvailable: { AppleIntelligenceProvider.status().isAvailable })
     let mcpSettings = MCPSettingsStore()
+    let composioConnections = ComposioConnectionsStore()
     let mcpOAuth = MCPOAuthManager()
     @ObservationIgnored private(set) lazy var mcp = MCPServerManager(oauth: mcpOAuth)
     let quickActionSettings = QuickActionSettingsStore()
@@ -222,6 +223,8 @@ final class AppCore {
         paletteCoordinator: paletteCoordinator, core: self)
     @ObservationIgnored private(set) lazy var mcpCoordinator = MCPCoordinator(
         settings: settings, store: mcpSettings, manager: mcp, core: self)
+    @ObservationIgnored private(set) lazy var composioCoordinator = ComposioCoordinator(
+        settings: settings, store: composioConnections, servers: mcpSettings, mcp: mcpCoordinator)
     /// Its own window and lifecycle, like Settings; Quick AI is the palette's half of the feature.
     @ObservationIgnored private(set) lazy var aiChatCoordinator = AIChatCoordinator(
         chats: aiChats, settings: settings, appIndex: appIndex,
@@ -685,7 +688,10 @@ final class AppCore {
             {
                 _ = $0.aiEnabled
                 _ = $0.mcpEnabled
-            }, reproject: { $0.mcpCoordinator.applyEnabled() })
+            }, reproject: {
+                $0.mcpCoordinator.applyEnabled()
+                $0.composioCoordinator.refreshSessions()
+            })
         track(
             { _ = $0.quickActionsEnabled },
             reproject: { $0.quickActionCoordinator.applyEnabled() })

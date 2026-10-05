@@ -93,7 +93,7 @@ rm -rf ~/Library/Caches/com.tinycast.app
 The Application Support folder holds your snippets, notes, quicklinks, clipboard history and AI
 chats, so copy out anything you want to keep first. The beta uses `com.tinycast.app.beta` instead.
 
-API keys you saved for AI providers or MCP servers, and extension sign-ins, are stored in your login
+API keys you saved for AI providers, Composio, or MCP servers, and extension sign-ins, are stored in your login
 Keychain. Remove them in Keychain Access if you want them gone too.
 
 To remove a _different_ app and the files it left behind, use Tinycast's

@@ -427,6 +427,8 @@ extension View {
             .environment(core.aiSettings)
             .environment(core.mcpSettings)
             .environment(core.mcpCoordinator)
+            .environment(core.composioConnections)
+            .environment(core.composioCoordinator)
             .environment(core.quickActionSettings)
             .environment(core.customQuickActions)
             .environment(core.chatGPTSubscription)

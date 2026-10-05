@@ -56,7 +56,7 @@ not just setting a preference:
 - **Calendar**: agreeing to let Tinycast read your calendar
 - **Auto Join Meetings** and **Camera Preview**: agreeing to open links and turn on the camera
 - **Quick Actions**: agreeing to let Tinycast type into other apps
-- **AI** and **MCP servers**: agreeing to send text to a model and run server code
+- **AI**, **connections**, and **MCP servers**: agreeing to send text to a model and run server code
 - **Search text in images and PDFs**: agreeing to text recognition in the background
 - **Fallback order and checkboxes**: these could add a shell command runner to your launcher
 

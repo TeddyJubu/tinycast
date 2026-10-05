@@ -247,6 +247,9 @@ enum Theme {
         static let layoutPositionCell: CGFloat = 34
         /// AI Providers: Mail's Accounts shape, a provider list beside the selected one's detail.
         static let aiProvidersPanel = CGSize(width: 840, height: 520)
+        /// The connections catalog: a grid of app cards, plus the remote MCP server form.
+        static let composioConnectionsPanel = CGSize(width: 720, height: 560)
+        static let composioAppLogo: CGFloat = 36
         static let aiProvidersList: CGFloat = 262
         /// What the system leaves either side of a segment's label once the control has settled.
         static let segmentLabelInset: CGFloat = 13
